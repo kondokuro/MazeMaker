@@ -1,0 +1,2 @@
+# MazeMaker
+Maze data generator
