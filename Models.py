@@ -1,33 +1,31 @@
-from uuid import uuid4
+from enum import Enum
 
 
-class MazeModel():
-    """The representation of a labirinth."""
+class AreaType(Enum):
+    ENTRANCE = 0
+    EXIT = 1
+    PATH = 2
+    BRANCH = 3
+
+
+class Maze:
+    """The data representation of a labyrinth."""
     
     def __init__(self):
         self.branches = []
         self.areas = []
         
     
-class BranchModel():
+class Branch:
     """A collection of areas linked to each other."""
     
     def __init__(self):
         self.areas = []
         
         
-class AreaModel():
+class Area:
     """The representation of a room in a maze."""
     
-    def __init__(self, is_path):
-        self.id = uuid4()
-        self.is_path = is_path
-        self.doors = []
-        
-        
-class DoorModel():
-    """Connects two areas."""
-    
-    def __init__(self, origin, destination):
-        self.origin = origin
-        self.destination = destination
+    def __init__(self, area_type):
+        self.type = area_type
+        self.connections = []
