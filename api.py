@@ -2,9 +2,8 @@ import hug
 import generator
 
 
-
-@hug.get(examples='name=Dario&age=40')
-def maze(name: hug.types.text, age: hug.types.number, hug_timer=3):
+@hug.get(examples='entrances=1&exits=1&length=1')
+def maze(entrances: hug.types.number, exits: hug.types.number, length: hug.types.number):
     """Returns a maze object."""
-    random_maze = generator.create_maze()
+    random_maze = generator.create_maze(entrances, exits, length)
     return random_maze

@@ -1,3 +1,13 @@
+from enum import Enum
+
+
+class AreaType(Enum):
+    ENTRANCE = 0
+    EXIT = 1
+    PATH = 2
+    BRANCH = 3
+
+
 class Maze:
     """The data representation of a labyrinth."""
     
@@ -16,6 +26,6 @@ class Branch:
 class Area:
     """The representation of a room in a maze."""
     
-    def __init__(self, is_path):
-        self.is_path = is_path
+    def __init__(self, area_type):
+        self.type = area_type
         self.connections = []
