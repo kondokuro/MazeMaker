@@ -1,6 +1,4 @@
-
-
-class MazeModel:
+class Maze:
     """The data representation of a labyrinth."""
     
     def __init__(self):
@@ -8,14 +6,14 @@ class MazeModel:
         self.areas = []
         
     
-class BranchModel:
+class Branch:
     """A collection of areas linked to each other."""
     
     def __init__(self):
         self.areas = []
         
         
-class AreaModel:
+class Area:
     """The representation of a room in a maze."""
     
     def __init__(self, is_path):
