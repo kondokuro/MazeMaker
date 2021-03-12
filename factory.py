@@ -6,8 +6,13 @@ def create_maze(entrances, exits, branches, branch_min_length, branch_max_length
     raise NotImplemented("Create maze has not been implemented")
 
 
-def _make_path():
-    """Provides a branch with an entrance and exit."""
+def _make_path(connection: Area = None):
+    """Provides a branch with an entrance and exit.
+    If provided with a connection area, the path can have
+    - a predefined entrance
+    - a predefined exit
+    - be connected to another branch of the maze
+    """
     raise NotImplemented()
 
 

@@ -3,7 +3,7 @@ from parts import Area, AreaCategory, Branch, Maze
 import pytest
 
 
-def __verify__(branch):
+def __verify_path__(branch: Branch):
     """Validates the branch to path standards:
     - Has one entrance
     - Has one exit
@@ -23,7 +23,11 @@ def __verify__(branch):
 
 
 minimal_path = Branch(
-    {Area(AreaCategory.ENTRANCE), Area(AreaCategory.PATH), Area(AreaCategory.EXIT)}
+    {
+        Area(AreaCategory.ENTRANCE),
+        Area(AreaCategory.PATH),
+        Area(AreaCategory.EXIT)
+    }
 )
 minimal_maze = Maze(minimal_path)
 
