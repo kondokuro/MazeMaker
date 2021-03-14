@@ -25,7 +25,7 @@ class Branch:
 
     def __init__(self, areas=None):
         self._id = uuid4()
-        self._areas = areas if areas is not None and areas is set else set()
+        self._areas = areas if areas is not None and areas is list else []
 
     @property
     def id(self): return self._id
@@ -34,7 +34,7 @@ class Branch:
     def areas(self): return self._areas
 
     def add(self, area: Area):
-        self._areas.add(area)
+        self._areas.append(area)
 
 
 class Maze:
@@ -42,10 +42,10 @@ class Maze:
 
     def __init__(self, branches=None):
         self._id = uuid4()
-        self.branches = branches if branches is not None and branches is set else set()
+        self.branches = branches if branches is not None and branches is list else []
 
     @property
     def id(self): return self._id
 
     def add(self, branch: Branch):
-        self.branches.add(branch)
+        self.branches.append(branch)

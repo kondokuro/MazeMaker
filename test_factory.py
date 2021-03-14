@@ -28,9 +28,9 @@ minimal_maze = Maze(minimal_path)
 def test_create_maze_one_entrance_one_exit_returns_minimal_maze():
     labyrinth = create_maze(1, 1, 1, 1, 1)
     assert len(labyrinth.branches) == 1
-    assert len(labyrinth.branches.areas) == 2
-    assert [area for area in labyrinth.branches if area.category == AreaCategory.ENTRANCE]
-    assert [area for area in labyrinth.branches if area.category == AreaCategory.EXIT]
+    assert len(labyrinth.branches[0].areas) == 2
+    assert [area for area in labyrinth.branches[0].areas if area.category == AreaCategory.ENTRANCE]
+    assert [area for area in labyrinth.branches[0].areas if area.category == AreaCategory.EXIT]
 
 
 # @pytest.mark.parametrize(
