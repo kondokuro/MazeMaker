@@ -34,7 +34,7 @@ class Branch:
     def areas(self): return self._areas
 
     def add(self, area: Area):
-        self._areas.append(area)
+        self._areas.add(area)
 
 
 class Maze:
@@ -48,4 +48,4 @@ class Maze:
     def id(self): return self._id
 
     def add(self, branch: Branch):
-        self.branches.append(branch)
+        self.branches.add(branch)
