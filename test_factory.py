@@ -1,44 +1,29 @@
 from factory import create_maze
-from parts import Area, AreaCategory, Branch, Maze
+import pytest
 
 
-# def __verify_path__(branch: Branch):
-#     """Validates the branch to path standards:
-#     - Has one entrance
-#     - Has one exit
-#     """
-#
-#     start = [area for area in branch.areas if area.category is AreaCategory.ENTRANCE]
-#     if not start:
-#         raise AttributeError("Branch is missing an entrance")
-#     if len(start) > 1:
-#         raise AttributeError("Branch has to many entrances")
-#
-#     end = [area for area in branch.areas if area.category is AreaCategory.EXIT]
-#     if not end:
-#         raise AttributeError("Branch is missing an exit")
-#     if len(end) > 1:
-#         raise AttributeError("Branch has to many exits")
+@pytest.mark.parametrize(
+    "entrances, exists, branches, min_length, max_length",
+    [
+        (1, 1, 1, 1, 1),
+        (1, 1, 3, 5, 8),
+        (1, 2, 5, 5, 8),
+        (2, 1, 3, 5, 8),
+    ])
+def test_create_maze_multiple_branches_returns_correct_maze(
+        entrances, exists, branches, min_length, max_length):
+    labyrinth = create_maze(entrances, exists, branches, min_length, max_length)
+    assert len(labyrinth.branches) == branches
+    assert len(labyrinth.paths()) == entrances
+    for branch in labyrinth.branches:
+        assert False if (len(branch.areas) < min_length or len(branch.areas) > max_length) else True
 
 
-minimal_path = Branch({Area(AreaCategory.ENTRANCE), Area(AreaCategory.EXIT)})
-minimal_maze = Maze(minimal_path)
+def test_create_maze_insufficient_branches_for_paths_returns_error_string():
+    labyrinth = create_maze(3, 3, 2, 3, 3)
+    assert labyrinth == "Insufficient branches for the requested entrances or exits"
 
 
-def test_create_maze_one_entrance_one_exit_returns_minimal_maze():
-    labyrinth = create_maze(1, 1, 1, 1, 1)
-    assert len(labyrinth.branches) == 1
-    assert len(labyrinth.branches[0].areas) == 2
-    assert [area for area in labyrinth.branches[0].areas if area.category == AreaCategory.ENTRANCE]
-    assert [area for area in labyrinth.branches[0].areas if area.category == AreaCategory.EXIT]
-
-
-# @pytest.mark.parametrize(
-#     "entrances, exists, branches, min_length, max_length, expected",
-#     [
-#         (1, 1, 1, 1, 1, minimal_maze),
-#         ("2+4", 6),
-#         ("6*9", 42),
-#     ])
-# def test_create_maze_more_exits_than_branches_raises_error():
-#     assert False
+def test_create_maze_insufficient_branches_for_paths_returns_error_string():
+    labyrinth = create_maze(3, 3, 2, 3, 3)
+    assert labyrinth == "Insufficient branches for the requested entrances or exits"

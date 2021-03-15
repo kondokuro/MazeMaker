@@ -1,23 +1,27 @@
-from parts import Area, AreaCategory, Branch, Maze
+from parts import Area, Branch, Maze
 
 
-def create_maze(entrances: int, exits: int, branches: int, branch_min_length: int, branch_max_length: int):
-    """Creates a maze based on the requested parameters."""
+def create_maze(paths: int, branches: int, branching_range: list, branch_length_range: list):
+    """Creates a maze based on the requested parameters.
+    - paths: the number of branches that have a portal (entrance or exit)
+    - branches: the total number of branches in the maze
+    - branching_range: min-max number of branches that can spread from a branch
+    - branch_length_range: min-max number of areas a branch can have
+    """
     generated = Maze()
     generated.add(_make_path(1))
     return generated
 
 
 def _make_path(length, connection: Area = None):
-    """Provides a branch of defined length areas with an entrance and exit.
+    """Provides a branch of defined length areas with an entrance or exit.
     If provided with a connection area, the path can have:
     - a predefined entrance
     - a predefined exit
     - be connected to another branch of the maze
     """
     generated = Branch()
-    generated.add(Area(AreaCategory.ENTRANCE))
-    generated.add(Area(AreaCategory.EXIT))
+    generated.add(Area(True))
     return generated
 
 
