@@ -1,20 +1,20 @@
-from parts import to_dict, Maze, Branch, Area
+from parts import Maze, Branch, Area
 
 
 def test_to_dict_area_does_not_raise():
-    to_dict(Area(True))
+    Area(True).to_dict()
 
 
 def test_to_dict_branch_does_not_raise():
-    to_dict(Branch(Area(True)))
+    Branch(Area(True)).to_dict()
 
 
 def test_to_dict_emtpy_maze_does_not_raise():
-    to_dict(Maze())
+    Maze().to_dict()
 
 
 def test_to_dict_maze_with_branch_does_not_raise():
-    to_dict(Maze(Branch([Area(True)])))
+    Maze(Branch([Area(True)])).to_dict()
 
 
 def test_branch_with_portals_is_path():

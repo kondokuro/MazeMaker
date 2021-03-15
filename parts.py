@@ -16,6 +16,9 @@ class Area:
     @property
     def is_portal(self): return self._is_portal
 
+    def to_dict(self):
+        return {"id": self.id, "is_portal": self.is_portal}
+
 
 class Branch:
     """A collection of areas linked to each other."""
@@ -37,6 +40,9 @@ class Branch:
     def is_path(self):
         return True if [area for area in self.areas if area.is_portal] else False
 
+    def to_dict(self):
+        return {"id": self.id, "areas": [area.to_dict() for area in self.areas]}
+
 
 class Maze:
     """The data representation of a labyrinth."""
@@ -55,11 +61,5 @@ class Maze:
     def add(self, branch: Branch):
         self.branches.append(branch)
 
-
-def to_dict(part):
-    if type(part) is Area:
-        return {"id": part.id, "is_portal": part.is_portal}
-    if type(part) is Branch:
-        return {"id": part.id, "areas": [to_dict(area) for area in part.areas]}
-    if type(part) is Maze:
-        return {"id": part.id, "branches": [to_dict(branch) for branch in part.branches]}
+    def to_dict(self):
+        return {"id": self.id, "branches": [branch.to_dict() for branch in self.branches]}
