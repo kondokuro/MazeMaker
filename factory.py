@@ -20,8 +20,7 @@ def _make_path(length, connection: Area = None):
     - a predefined exit
     - be connected to another branch of the maze
     """
-    generated = Branch()
-    generated.add(Area(True))
+    generated = Branch([Area(True)])
     return generated
 
 
