@@ -1,13 +1,13 @@
 from parts import Maze, Branch, Area
-from pytest import mark
+import pytest
 
 
-@mark.parametrize("is_portal", [True, False])
+@pytest.mark.parametrize("is_portal", [True, False])
 def test_area_is_portal(is_portal):
     assert Area(is_portal).is_portal == is_portal
 
 
-@mark.parametrize("is_portal", [True, False])
+@pytest.mark.parametrize("is_portal", [True, False])
 def test_area_to_dict_creates_dictionary_representation(is_portal):
     area = Area(is_portal)
     area_dict = area.to_dict()
@@ -17,12 +17,26 @@ def test_area_to_dict_creates_dictionary_representation(is_portal):
     assert len(area_dict.keys()) == 2
 
 
-@mark.parametrize("is_path", [True, False])
+@pytest.mark.parametrize("connection_count", [1, 3, 5, 8])
+def test_add_connection(connection_count):
+    area = Area(False)
+    for i in range(1, connection_count):
+        area.add_connection(Area(False))
+    assert len(area.connections) == connection_count
+
+
+def test_add_connection_not_an_area_raises_error():
+    area = Area(False)
+    with pytest.raises(AttributeError):
+        area.add_connection(Branch([]))
+
+
+@pytest.mark.parametrize("is_path", [True, False])
 def test_branch_is_path_with_portals_returns_true(is_path):
     assert Branch([Area(is_path)]).is_path == is_path
 
 
-@mark.parametrize("is_path", [True, False])
+@pytest.mark.parametrize("is_path", [True, False])
 def test_branch_to_dict_creates_dictionary_representation(is_path):
     branch = Branch([Area(is_path)])
     branch_dict = branch.to_dict()
@@ -54,7 +68,7 @@ def test_maze_branches_without_paths_returns_emtpy_list():
     assert Maze([Branch([Area(True)])]).branches == []
 
 
-@mark.parametrize("has_path", [True, False])
+@pytest.mark.parametrize("has_path", [True, False])
 def test_maze_to_dict_maze_with_branches_creates_dictionary_representation(has_path):
     branches = [Branch([Area(has_path)])]
     maze = Maze(branches)
