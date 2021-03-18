@@ -23,7 +23,7 @@ class Area:
 
     def add_connection(self, area):
         """Add an area connection to this area."""
-        if area is not Area:
+        if not isinstance(area, Area):
             raise AttributeError("A connection must be an area")
         self.__connections.append(area)
 

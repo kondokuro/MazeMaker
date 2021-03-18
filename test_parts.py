@@ -20,7 +20,7 @@ def test_area_to_dict_creates_dictionary_representation(is_portal):
 @pytest.mark.parametrize("connection_count", [1, 3, 5, 8])
 def test_add_connection(connection_count):
     area = Area(False)
-    for i in range(1, connection_count):
+    for i in range(0, connection_count):
         area.add_connection(Area(False))
     assert len(area.connections) == connection_count
 
@@ -68,10 +68,9 @@ def test_maze_branches_without_paths_returns_emtpy_list():
     assert Maze([Branch([Area(True)])]).branches == []
 
 
-@pytest.mark.parametrize("has_path", [True, False])
-def test_maze_to_dict_maze_with_branches_creates_dictionary_representation(has_path):
-    branches = [Branch([Area(has_path)])]
-    maze = Maze(branches)
+def test_maze_to_dict_maze_creates_dictionary_representation():
+    path = [Branch([Area(True)])]
+    maze = Maze(path)
     maze_dict = maze.to_dict()
     assert maze_dict
     assert maze_dict.get("id") == str(maze.id)
