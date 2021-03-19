@@ -1,27 +1,16 @@
 from factory import create_maze, _make_branch, _get_connectable_areas
-from parts import Area, Branch
+from parts import Area
 import pytest
 
 
-test_branches = [
-    Branch([]),
-    Branch([]),
-    Branch([]),
-]
+@pytest.mark.parametrize("branches, max_connections", [])
+def test_get_connectable_areas_returns_areas_within_limit(branches, max_connections):
+    assert _get_connectable_areas(branches, max_connections)
 
 
-def __is_branch_connected(branch: Branch):
-    return True if [area for area in branch.areas if area.connections] else False
-
-
-@pytest.mark.parametrize("branches, max", [])
-def test_get_connectable_areas_returns_areas_within_limit(branches, max):
-    assert _get_connectable_areas(branches, max)
-
-
-@pytest.mark.parametrize("branches, max", [])
-def test_get_connectable_areas_include_portals_returns_areas_within_limit(branches, max):
-    connected_areas = _get_connectable_areas(branches, max, exclude_portals=False)
+@pytest.mark.parametrize("branches, max_connections", [])
+def test_get_connectable_areas_include_portals_returns_areas_within_limit(branches, max_connections):
+    connected_areas = _get_connectable_areas(branches, max_connections, exclude_portals=False)
     assert connected_areas
     assert [area for area in connected_areas if area.is_portal]
 
@@ -116,15 +105,16 @@ def test_make_branch_connected_to_portal_with_end_portal_returns_path_containing
 @pytest.mark.parametrize(
     "paths, branches, branch_limit, min_length, max_length",
     [
-        (1, 3, 4, 5, 6),
+        (1, 3, 4, 5, 3),
         (2, 3, 6, 5, 6),
         (3, 6, 9, 2, 6),
+        (6, 2, 9, 2, 6),
     ])
 def test_create_maze_multiple_branches_returns_correct_maze(
         paths, branches, branch_limit, min_length, max_length):
     labyrinth = create_maze(paths, branches, branch_limit, (min_length, max_length))
     assert len(labyrinth.branches) == branches
     assert len(labyrinth.paths) == paths
+    assert len([hall for hall in labyrinth.halls if hall.has_connections]) == len(labyrinth.halls)
     for hall in labyrinth.halls:
-        assert False if (len(hall.areas) < min_length or len(hall.areas) > max_length) else True
-        assert __is_branch_connected(hall)
+        pass

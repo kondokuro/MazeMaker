@@ -6,7 +6,7 @@ class Area:
     that this area has an entrance or exist point.
     """
 
-    def __init__(self, is_portal: bool, connection=None):
+    def __init__(self, is_portal: bool = False, connection=None):
         self.__id = uuid4()
         self.__is_portal = is_portal
         self.__connections = []
@@ -78,13 +78,17 @@ class Branch:
         """A branch is path if it has any portals."""
         return True if [area for area in self.areas if area.is_portal] else False
 
-    def has_connection(self):
-        """True if any branch area has a connection to an area not in the branch"""
-        areas_and_connections = [area for area in self.areas]
+    @property
+    def connections(self):
+        """List of areas not in the branch."""
+        connections = []
         for area in self.areas:
-            areas_and_connections = areas_and_connections + area.connections
-        external_areas = [connection for connection in areas_and_connections if connection not in self.areas]
-        return True if external_areas else False
+            connections.extend(area.connections)
+        return [connection for connection in connections if connection not in self.areas]
+
+    def has_connections(self):
+        """True if any branch area has a connection to an area not in the branch"""
+        return True if self.connections else False
 
     def to_dict(self):
         return {

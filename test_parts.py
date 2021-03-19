@@ -9,9 +9,9 @@ def test_area_is_portal(is_portal):
 
 @pytest.mark.parametrize("connection_count", [1, 3, 5, 8])
 def test_area_connect_adds_connections(connection_count):
-    area = Area(False)
+    area = Area()
     for i in range(0, connection_count):
-        area.connect(Area(False))
+        area.connect(Area())
     assert len(area.connections) == connection_count
 
 
@@ -24,7 +24,7 @@ def test_area_connect_both_areas_are_connections():
 
 
 def test_area_connect_not_an_area_raises_error():
-    area = Area(False)
+    area = Area()
     with pytest.raises(AttributeError):
         area.connect(Branch([]))
 
@@ -45,16 +45,18 @@ def test_branch_is_path_with_portals_returns_true(is_path):
     assert Branch([Area(is_path)]).is_path == is_path
 
 
-def test_branch_connected_has_connection_returns_true():
-    an_area = Area(False)
-    branch = Branch([Area(False), Area(False)])
+@pytest.mark.parametrize("connect_count", [1, 3, 7])
+def test_branch_connections_returns_external_areas(connect_count):
+    an_area = Area()
+    branch = Branch([Area() for i in range(connect_count)])
     branch.areas[0].connect(an_area)
-    assert branch.has_connection()
+    assert len(branch.connections) == 1
+    assert an_area in branch.connections
 
 
-def test_branch_not_connected_has_connection_returns_false():
-    branch = Branch([Area(False), Area(False)])
-    assert branch.has_connection() is False
+def test_branch_not_connected_has_connections_returns_false():
+    branch = Branch([Area(), Area()])
+    assert branch.has_connections() is False
 
 
 @pytest.mark.parametrize("is_path", [True, False])
