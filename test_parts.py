@@ -36,6 +36,18 @@ def test_branch_is_path_with_portals_returns_true(is_path):
     assert Branch([Area(is_path)]).is_path == is_path
 
 
+def test_branch_connected_has_connection_returns_true():
+    an_area = Area(False)
+    branch = Branch([Area(False), Area(False)])
+    branch.areas[0].add_connection(an_area)
+    assert branch.has_connection()
+
+
+def test_branch_not_connected_has_connection_retrns_false():
+    branch = Branch([Area(False), Area(False)])
+    assert branch.has_connection() is False
+
+
 @pytest.mark.parametrize("is_path", [True, False])
 def test_branch_to_dict_creates_dictionary_representation(is_path):
     branch = Branch([Area(is_path)])

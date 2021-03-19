@@ -16,7 +16,7 @@ def create_maze(paths: int, branches: int, branch_limit: int, branch_length_rang
 def _make_branch(length,  max_connections: int = 4, connection: Area = None, start:bool = False, end: bool = False):
     """Provides a branch.
     - length: number of areas in the branch
-    - max_connections: limit on how many connections an area cn have, defaults to 4.
+    - max_connections: limit on how many connections any area in the branch can have, defaults to 4, minimum 1.
     - connection: this area is used as the start point, great for linking branches.
     - start: indicates that the first area as a portal, ignored if the connection is a portal.
     - end: indicates that the last area as a portal.

@@ -7,10 +7,10 @@ class Area:
     area as part of a path branch of the maze.
     """
 
-    def __init__(self, is_portal: bool):
+    def __init__(self, is_portal: bool, connection = None):
         self.__id = uuid4()
         self.__is_portal = is_portal
-        self.__connections = []
+        self.__connections = [connection] if isinstance(connection, Area) else []
 
     @property
     def id(self): return self.__id
@@ -28,7 +28,10 @@ class Area:
         self.__connections.append(area)
 
     def to_dict(self):
-        return {"id": str(self.id), "is_portal": self.is_portal}
+        return {
+            "id": str(self.id),
+            "is_portal": self.is_portal,
+            "connections": [area.to_dict() for area in self.connections]}
 
 
 class Branch:
@@ -47,7 +50,7 @@ class Branch:
     def areas(self): return self.__areas
 
     @property
-    def portals(self): [area for area in self.areas if area.is_portal]
+    def portals(self): return [area for area in self.areas if area.is_portal]
 
     @property
     def is_path(self):
@@ -56,12 +59,18 @@ class Branch:
 
     def has_connection(self):
         """True if any branch area has a connection to an area not in the branch"""
+        areas_and_connections = [area for area in self.areas]
+        for area in self.areas:
+            areas_and_connections = areas_and_connections + area.connections
+        external_areas = [connection for connection in areas_and_connections if connection not in self.areas]
+        return True if external_areas else False
 
     def to_dict(self):
         return {
             "id": str(self.id),
+            "is_path": self.is_path,
             "areas": [area.to_dict() for area in self.areas],
-            "is_path": self.is_path
+            "portals": [area.to_dict() for area in self.portals]
         }
 
 
