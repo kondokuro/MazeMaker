@@ -122,7 +122,7 @@ def test_make_branch_connected_to_portal_with_end_portal_returns_path_containing
     ])
 def test_create_maze_multiple_branches_returns_correct_maze(
         paths, branches, branch_limit, min_length, max_length):
-    labyrinth = create_maze(paths, branches, branch_limit, [min_length, max_length])
+    labyrinth = create_maze(paths, branches, branch_limit, (min_length, max_length))
     assert len(labyrinth.branches) == branches
     assert len(labyrinth.paths) == paths
     for hall in labyrinth.halls:

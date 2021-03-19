@@ -3,29 +3,36 @@ from uuid import uuid4
 
 class Area:
     """The representation of a room in a maze, its property is_portal indicates
-    that this area has an entrance or exist point while is_path identifies this
-    area as part of a path branch of the maze.
+    that this area has an entrance or exist point.
     """
 
-    def __init__(self, is_portal: bool, connection = None):
+    def __init__(self, is_portal: bool, connection=None):
         self.__id = uuid4()
         self.__is_portal = is_portal
-        self.__connections = [connection] if isinstance(connection, Area) else []
+        self.__connections = []
+        if isinstance(connection, Area):
+            self.__connections = self.connect(connection)
 
     @property
-    def id(self): return self.__id
+    def id(self):
+        return self.__id
 
     @property
-    def is_portal(self): return self.__is_portal
+    def is_portal(self):
+        return self.__is_portal
 
     @property
-    def connections(self): return self.__connections
+    def connections(self) -> list:
+        return self.__connections
 
-    def add_connection(self, area):
-        """Add an area connection to this area."""
+    def connect(self, area):
+        """Sets both areas as connections, unless they where connected."""
         if not isinstance(area, Area):
             raise AttributeError("A connection must be an area")
-        self.__connections.append(area)
+        if area not in self.connections:
+            self.connections.append(area)
+        if self not in area.connections:
+            area.connect(self)
 
     def to_dict(self):
         return {
@@ -35,22 +42,36 @@ class Area:
 
 
 class Branch:
-    """A collection of areas linked to each other, if all areas in the branch
-    are paths this branch has an entrance that leads to an exit, otherwise
-    it is just a dead end branch."""
+    """A collection of areas linked to each other."""
 
     def __init__(self, areas: list):
+        """Create a branch with the areas in the list, they do not need to be connected.
+        If any of them are portals then this branch will be a path."""
         self.__id = uuid4()
-        self.__areas = areas
+        self.__areas = self.__connect_areas(areas)
+
+    @staticmethod
+    def __connect_areas(areas: list):
+        if len(areas) < 2:
+            return areas
+        if [item for item in areas if not isinstance(item, Area)]:
+            raise TypeError("unable to connect areas. Any of the argument's elements was not instance of Area.")
+        for i in range(len(areas) - 1):
+            area = areas[i]
+            area.connect(areas[i + 1])
+        return areas
 
     @property
-    def id(self): return self.__id
+    def id(self):
+        return self.__id
 
     @property
-    def areas(self): return self.__areas
+    def areas(self):
+        return self.__areas
 
     @property
-    def portals(self): return [area for area in self.areas if area.is_portal]
+    def portals(self):
+        return [area for area in self.areas if area.is_portal]
 
     @property
     def is_path(self):

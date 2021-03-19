@@ -7,6 +7,28 @@ def test_area_is_portal(is_portal):
     assert Area(is_portal).is_portal == is_portal
 
 
+@pytest.mark.parametrize("connection_count", [1, 3, 5, 8])
+def test_area_connect_adds_connections(connection_count):
+    area = Area(False)
+    for i in range(0, connection_count):
+        area.connect(Area(False))
+    assert len(area.connections) == connection_count
+
+
+def test_area_connect_both_areas_are_connections():
+    one = Area(False)
+    two = Area(True)
+    one.connect(two)
+    assert one in two.connections
+    assert two in one.connections
+
+
+def test_area_connect_not_an_area_raises_error():
+    area = Area(False)
+    with pytest.raises(AttributeError):
+        area.connect(Branch([]))
+
+
 @pytest.mark.parametrize("is_portal", [True, False])
 def test_area_to_dict_creates_dictionary_representation(is_portal):
     area = Area(is_portal)
@@ -14,21 +36,8 @@ def test_area_to_dict_creates_dictionary_representation(is_portal):
     assert area_dict
     assert area_dict.get("id") == str(area.id)
     assert area_dict.get("is_portal") == is_portal
-    assert len(area_dict.keys()) == 2
-
-
-@pytest.mark.parametrize("connection_count", [1, 3, 5, 8])
-def test_add_connection(connection_count):
-    area = Area(False)
-    for i in range(0, connection_count):
-        area.add_connection(Area(False))
-    assert len(area.connections) == connection_count
-
-
-def test_add_connection_not_an_area_raises_error():
-    area = Area(False)
-    with pytest.raises(AttributeError):
-        area.add_connection(Branch([]))
+    assert area_dict.get("connections") == area.connections
+    assert len(area_dict.keys()) == 3
 
 
 @pytest.mark.parametrize("is_path", [True, False])
@@ -39,11 +48,11 @@ def test_branch_is_path_with_portals_returns_true(is_path):
 def test_branch_connected_has_connection_returns_true():
     an_area = Area(False)
     branch = Branch([Area(False), Area(False)])
-    branch.areas[0].add_connection(an_area)
+    branch.areas[0].connect(an_area)
     assert branch.has_connection()
 
 
-def test_branch_not_connected_has_connection_retrns_false():
+def test_branch_not_connected_has_connection_returns_false():
     branch = Branch([Area(False), Area(False)])
     assert branch.has_connection() is False
 
