@@ -27,9 +27,21 @@ def _make_branch(length,  max_connections: int = 4, connection: Area = None, sta
 
 def _get_connectable_areas(branches: list, connection_limit: int):
     """Returns a list of areas that have less than limit connections."""
-    return []
+    connectable = []
+    for branch in branches:
+        available = _get_branch_open_areas(branch, connection_limit)
+        connectable.extend([area for area in available if not area.is_portal])
+    return connectable
 
 
 def _get_connectable_portals(branches: list, connection_limit: int):
     """Returns a list of portal areas that have less than limit connections."""
-    return []
+    connectable = []
+    for branch in branches:
+        available = _get_branch_open_areas(branch, connection_limit)
+        connectable.extend([area for area in available if area.is_portal])
+    return connectable
+
+
+def _get_branch_open_areas(branch: Branch, limit: int):
+    return[area for area in branch.areas if len(area.connections) < limit]

@@ -11,18 +11,18 @@ def __make_test_area(area: Area, connections: int):
 
 def test_get_connectable_areas_returns_areas_within_limit():
     test_branches = [
-        Branch([__make_test_area(Area(), 4), __make_test_area(Area(), 2)]),
+        Branch([__make_test_area(Area(), 4), __make_test_area(Area(True), 2)]),
         Branch([__make_test_area(Area(), 4), __make_test_area(Area(), 2)])
     ]
-    assert _get_connectable_areas(test_branches, 4) == 2
+    assert len(_get_connectable_areas(test_branches, 4)) == 1
 
 
 def test_get_connectable_portals_returns_areas_within_limit():
     test_branches = [
-        Branch([__make_test_area(Area(), 4), __make_test_area(Area(True), 2)]),
+        Branch([__make_test_area(Area(), 4), __make_test_area(Area(), 2)]),
         Branch([__make_test_area(Area(), 4), __make_test_area(Area(True), 2)])
     ]
-    assert _get_connectable_portals(test_branches, 4) == 2
+    assert len(_get_connectable_portals(test_branches, 4)) == 1
 
 
 def test_make_branch_returned_branch_areas_are_connected():
