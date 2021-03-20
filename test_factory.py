@@ -1,18 +1,28 @@
-from factory import create_maze, _make_branch, _get_connectable_areas
-from parts import Area
+from factory import create_maze, _make_branch, _get_connectable_areas, _get_connectable_portals
+from parts import Area, Branch
 import pytest
 
 
-@pytest.mark.parametrize("branches, max_connections", [])
-def test_get_connectable_areas_returns_areas_within_limit(branches, max_connections):
-    assert _get_connectable_areas(branches, max_connections)
+def __make_test_area(area: Area, connections: int):
+    for i in range(connections):
+        area.connect(Area())
+    return area
 
 
-@pytest.mark.parametrize("branches, max_connections", [])
-def test_get_connectable_areas_include_portals_returns_areas_within_limit(branches, max_connections):
-    connected_areas = _get_connectable_areas(branches, max_connections, exclude_portals=False)
-    assert connected_areas
-    assert [area for area in connected_areas if area.is_portal]
+def test_get_connectable_areas_returns_areas_within_limit():
+    test_branches = [
+        Branch([__make_test_area(Area(), 4), __make_test_area(Area(), 2)]),
+        Branch([__make_test_area(Area(), 4), __make_test_area(Area(), 2)])
+    ]
+    assert _get_connectable_areas(test_branches, 4) == 2
+
+
+def test_get_connectable_portals_returns_areas_within_limit():
+    test_branches = [
+        Branch([__make_test_area(Area(), 4), __make_test_area(Area(True), 2)]),
+        Branch([__make_test_area(Area(), 4), __make_test_area(Area(True), 2)])
+    ]
+    assert _get_connectable_portals(test_branches, 4) == 2
 
 
 def test_make_branch_returned_branch_areas_are_connected():
@@ -105,10 +115,10 @@ def test_make_branch_connected_to_portal_with_end_portal_returns_path_containing
 @pytest.mark.parametrize(
     "paths, branches, branch_limit, min_length, max_length",
     [
-        (1, 3, 4, 5, 3),
+        (1, 3, 4, 5, 8),
         (2, 3, 6, 5, 6),
         (3, 6, 9, 2, 6),
-        (6, 2, 9, 2, 6),
+        (6, 2, 9, 6, 2),
     ])
 def test_create_maze_multiple_branches_returns_correct_maze(
         paths, branches, branch_limit, min_length, max_length):
@@ -117,4 +127,19 @@ def test_create_maze_multiple_branches_returns_correct_maze(
     assert len(labyrinth.paths) == paths
     assert len([hall for hall in labyrinth.halls if hall.has_connections]) == len(labyrinth.halls)
     for hall in labyrinth.halls:
-        pass
+        assert min_length <= len(hall.areas) <= max_length
+        for area in hall.areas:
+            assert len(area.connections) <= branch_limit
+
+
+@pytest.mark.parametrize(
+    "paths, branches, branch_limit, min_length, max_length",
+    [
+        (0, 3, 4, 5, 8),  # no paths
+        (2, 2, 1, 5, 6),  # minimum connections allowed too low
+        (3, 6, 9, 1, 4),  # min length too small
+        (6, 2, 9, 1, 1),  # max length too small
+    ])
+def test_create_maze_bad_parameters_raises_value_error(paths, branches, branch_limit, min_length, max_length):
+    with ValueError:
+        create_maze(paths, branches, branch_limit, (min_length, max_length))

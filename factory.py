@@ -25,8 +25,11 @@ def _make_branch(length,  max_connections: int = 4, connection: Area = None, sta
     return generated
 
 
-def _get_connectable_areas(branches: list, connection_limit: int, exclude_portals: bool = True):
-    """Returns a list of areas that have less than limit connections.
-    By default excluding portals.
-    """
+def _get_connectable_areas(branches: list, connection_limit: int):
+    """Returns a list of areas that have less than limit connections."""
+    return []
+
+
+def _get_connectable_portals(branches: list, connection_limit: int):
+    """Returns a list of portal areas that have less than limit connections."""
     return []
