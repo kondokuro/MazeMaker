@@ -11,7 +11,7 @@ class Area:
         self.__is_portal = is_portal
         self.__connections = []
         if isinstance(connection, Area):
-            self.__connections = self.connect(connection)
+            self.connect(connection)
 
     @property
     def id(self):
@@ -30,7 +30,7 @@ class Area:
         if not isinstance(area, Area):
             raise AttributeError("A connection must be an area")
         if area not in self.connections:
-            self.connections.append(area)
+            self.__connections.append(area)
         if self not in area.connections:
             area.connect(self)
 
@@ -45,10 +45,10 @@ class Branch:
     """A collection of areas linked to each other."""
 
     def __init__(self, areas: list):
-        """Create a branch with the areas in the list, they do not need to be connected.
+        """Create a branch with the areas in the list, they need to be connected.
         If any of them are portals then this branch will be a path."""
         self.__id = uuid4()
-        self.__areas = self.__connect_areas(areas)
+        self.__areas = areas
 
     @staticmethod
     def __connect_areas(areas: list):

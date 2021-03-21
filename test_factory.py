@@ -33,7 +33,7 @@ def test_make_branch_returned_branch_areas_are_connected():
 
 @pytest.mark.parametrize("length", [1, 3, 5, 8, 13])
 def test_make_branch_with_start_portal_returns_one_way_path_of_set_size(length):
-    path = _make_branch(length, start=True)
+    path = _make_branch(length, has_start=True)
     assert path.is_path
     assert len(path.portals) == 1
     assert path.areas[0].is_portal
@@ -42,7 +42,7 @@ def test_make_branch_with_start_portal_returns_one_way_path_of_set_size(length):
 
 @pytest.mark.parametrize("length", [1, 3, 5, 8, 13])
 def test_make_branch_with_end_portal_returns_one_way_path_of_set_size(length):
-    path = _make_branch(length, end=True)
+    path = _make_branch(length, has_end=True)
     assert path.is_path
     assert len(path.portals) == 1
     assert path.areas[length - 1].is_portal
@@ -50,13 +50,13 @@ def test_make_branch_with_end_portal_returns_one_way_path_of_set_size(length):
 
 
 def test_make_branch_one_area_two_portals_raises_error():
-    with pytest.raises(AttributeError):
-        _make_branch(1, start=True, end=True)
+    with pytest.raises(ValueError):
+        _make_branch(1, has_start=True, has_end=True)
 
 
 @pytest.mark.parametrize("length", [2, 5, 7, 11, 16])
 def test_make_branch_returns_path_of_set_size_and_paired_portals(length):
-    path = _make_branch(length, start=True, end=True)
+    path = _make_branch(length, has_start=True, has_end=True)
     assert path.is_path
     assert len(path.portals) == 2
     assert path.areas[0].is_portal
@@ -66,13 +66,13 @@ def test_make_branch_returns_path_of_set_size_and_paired_portals(length):
 
 def test_make_branch_connected_to_portal_one_area_two_portals_raises_error():
     connection = Area(is_portal=True)
-    with pytest.raises(AttributeError):
-        _make_branch(1, connection=connection, start=True, end=True)
+    with pytest.raises(ValueError):
+        _make_branch(1, link_to=connection, has_start=True, has_end=True)
 
 
 def test_make_branch_connected_to_area_returns_branch_containing_connection():
     connection = Area(is_portal=False)
-    connected_branch = _make_branch(4, connection=connection)
+    connected_branch = _make_branch(4, link_to=connection)
     assert False if connected_branch.is_path else True
     assert connection in connected_branch.areas
     assert connection not in connected_branch.portals
@@ -82,21 +82,20 @@ def test_make_branch_connected_to_area_returns_branch_containing_connection():
 @pytest.mark.parametrize("is_portal", [True, False])
 def test_make_branch_connected_adds_connection_to_connected_area(is_portal):
     connected_area = Area(is_portal=is_portal)
-    branch = _make_branch(3, connection=connected_area)
-    assert connected_area.connections
-
+    branch = _make_branch(3, link_to=connected_area)
     branch_areas = branch.areas
-    branch_connections = []
+    branch_links = []
     for area in branch_areas:
         for connection in area.connections:
-            branch_connections.append(connection)
-    assert connected_area.connections[0] in branch_connections
+            branch_links.append(connection)
+    assert connected_area.connections
+    assert connected_area.connections[0] in branch_links
 
 
 @pytest.mark.parametrize("has_start", [True, False])
 def test_make_branch_connected_to_portal_ignores_start_portal_returns_path_containing_connection(has_start):
     connection = Area(is_portal=True)
-    connected_path = _make_branch(3, connection=connection, start=has_start)
+    connected_path = _make_branch(3, link_to=connection, has_start=has_start)
     assert connected_path.is_path
     assert connection in connected_path.areas
     assert connection in connected_path.portals
@@ -105,7 +104,7 @@ def test_make_branch_connected_to_portal_ignores_start_portal_returns_path_conta
 
 def test_make_branch_connected_to_portal_with_end_portal_returns_path_containing_connection():
     connection = Area(is_portal=True)
-    connected_path = _make_branch(5, connection=connection, end=True)
+    connected_path = _make_branch(5, link_to=connection, has_end=True)
     assert connected_path.is_path
     assert connection in connected_path.areas
     assert connection in connected_path.portals
