@@ -1,11 +1,12 @@
 class Area:
     """The representation of a room in a maze, its property is_portal indicates
-    that this area has an entrance or exist point.
+    that this area has an with_entrance or exist point.
     """
     __id = 0
 
     def __init__(self, is_portal: bool = False):
         self.id = Area.__id + 1
+        Area.__id += 1
         self.is_portal = is_portal
         self.links = []
 
@@ -18,6 +19,7 @@ class Hall:
 
     def __init__(self, areas: list = None):
         self.id = Hall.__id + 1
+        Hall.__id += 1
         self.areas = areas if areas else []
 
     @property
@@ -44,6 +46,7 @@ class Maze:
 
     def __init__(self, branches: list = None):
         self.id = Maze.__id + 1
+        Maze.__id += 1
         self.halls = branches if branches else []
 
     @property
