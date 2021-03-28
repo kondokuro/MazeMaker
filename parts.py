@@ -10,6 +10,12 @@ class Area:
         self.is_portal = is_portal
         self.links = []
 
+    def __str__(self):
+        return f"{'portal' if self.is_portal else 'area'} '{self.id}'"
+
+    def __repr__(self):
+        return self.__str__()
+
 
 class Hall:
     """A collection of areas linked to each other, if any of them
@@ -21,6 +27,15 @@ class Hall:
         self.id = Hall.__id + 1
         Hall.__id += 1
         self.areas = areas if areas else []
+
+    def __str__(self):
+        string = f"{'path' if self.is_path else 'branch'} '{self.id}'"
+        if self.joints:
+            string += f" connected to {self.joints}"
+        return string
+
+    def __repr__(self):
+        return self.__str__()
 
     @property
     def portals(self):
@@ -48,6 +63,12 @@ class Maze:
         self.id = Maze.__id + 1
         Maze.__id += 1
         self.halls = branches if branches else []
+
+    def __str__(self):
+        return f"This is Maze number {self.id} with {len(self.paths)} paths and {len(self.branches)} branches"
+
+    def __repr__(self):
+        return self.__str__()
 
     @property
     def branches(self):

@@ -82,6 +82,9 @@ def test_create_maze_default_returns_one_room_maze():
 @pytest.mark.parametrize(
     "portal_cnt, hall_cnt, branching_limit, min_length, max_length",
     [
+        (1, 1, 1, 1, 1),
+        (1, 1, 2, 4, 5),
+        (2, 1, 2, 4, 5),
         (1, 2, 3, 4, 5),
         (2, 4, 6, 5, 6),
         (3, 6, 9, 2, 6),
