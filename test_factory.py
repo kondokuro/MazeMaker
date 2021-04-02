@@ -61,7 +61,7 @@ def test_make_hall_of_size_and_any_endpoint_returns_path_of_set_size(length, wit
         (True, True, False),
         (True, True, True), 
     ])
-def test_make_hall_branching_from_area_links_area_to_branch(as_portal, with_start ,with_end):
+def test_make_hall_branching_from_area_links_area_to_branch(as_portal, with_start, with_end):
     connected_area = Area(as_portal)
     branch = factory._make_hall(3, connected_area, with_start, with_end)
     assert connected_area in branch.joints
@@ -82,22 +82,33 @@ def test_create_maze_default_returns_one_room_maze():
 @pytest.mark.parametrize(
     "portal_cnt, hall_cnt, branching_limit, min_length, max_length",
     [
-        (1, 1, 1, 1, 1),
         (1, 1, 2, 4, 5),
         (2, 1, 2, 4, 5),
         (1, 2, 3, 4, 5),
-        (2, 4, 6, 5, 6),
+        (2, 8, 4, 5, 9),
         (3, 6, 9, 2, 6),
         (6, 2, 9, 2, 2),
     ])
 def test_create_maze_multiple_branches_returns_correct_maze(
         portal_cnt, hall_cnt, branching_limit, min_length, max_length):
     labyrinth = factory.create_maze(portal_cnt, hall_cnt, branching_limit, (min_length, max_length))
-    assert labyrinth.paths, "resulting maze had no paths"
-    assert len(labyrinth.halls) == hall_cnt, "resulting halls where not equal"
-    hall_connections = [hall for hall in labyrinth.halls if hall.joints]
-    assert len(hall_connections) == len(labyrinth.halls), "not all halls are connected"
+
+    assert len(labyrinth.halls) == hall_cnt, "halls created where out of bound"
+
+    hall_joints = [hall for hall in labyrinth.halls if hall.joints]
+    if hall_joints:
+        assert len(hall_joints) == len(labyrinth.halls), "not all halls are connected"
+
     for hall in labyrinth.halls:
         assert min_length <= len(hall.areas) <= max_length, "length of halls was outside of bound"
         for area in hall.areas:
-            assert len(area.links) <= branching_limit, "area had more links than allowed"
+            assert len(area.links) <= branching_limit, "an area had more links than allowed"
+
+    assert labyrinth.paths, "resulting maze had no paths"
+
+    portals_made = []
+    for hall in labyrinth.paths:
+        for area in hall.areas:
+            if area.is_portal:
+                portals_made.append(area)
+    assert len(portals_made) <= portal_cnt, "made too many portals"

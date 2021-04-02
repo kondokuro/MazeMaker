@@ -36,7 +36,7 @@ def test_hall_joints_returns_external_areas():
     joint_area.links.append(external)
     branch = Hall([joint_area, Area()])
     assert len(branch.joints) == 1
-    assert external in branch.joints
+    assert (joint_area, external) in branch.joints
     assert external not in branch.areas
 
 

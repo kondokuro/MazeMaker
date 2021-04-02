@@ -31,7 +31,9 @@ class Hall:
     def __str__(self):
         string = f"{'path' if self.is_path else 'branch'} '{self.id}'"
         if self.joints:
-            string += f" connected to {self.joints}"
+            string += " joint on"
+        for joint in self.joints:
+            string += f" ({joint[0]} with {joint[1]})"
         return string
 
     def __repr__(self):
@@ -48,11 +50,19 @@ class Hall:
 
     @property
     def joints(self):
-        """List of areas not in the hall."""
+        """List of area tuples where halls are joint, where the first element
+        is in the current hall while the second belongs to the connected hall.
+        """
         connecting_areas = []
         for area in self.areas:
             connecting_areas.extend(area.links)
-        return [area for area in connecting_areas if area not in self.areas]
+        just_joints = [area for area in connecting_areas if area not in self.areas]
+        joints = []
+        for joint in just_joints:
+            for area in self.areas:
+                if joint in area.links:
+                    joints.append((area, joint))
+        return joints
 
 
 class Maze:
@@ -65,7 +75,16 @@ class Maze:
         self.halls = branches if branches else []
 
     def __str__(self):
-        return f"This is Maze number {self.id} with {len(self.paths)} paths and {len(self.branches)} branches"
+        portals = []
+        for hall in self.paths:
+            portals.extend(hall.portals)
+        portal_cnt = len(portals)
+        exit_string = "no exits"
+        if portal_cnt > 1:
+            exit_string = "an exit" if portal_cnt < 3 else f"{portal_cnt - 1} exits"
+        string = f"Maze '{self.id}', containing an entrance"\
+                 f" and {exit_string}, composed of {len(self.halls)} halls"
+        return string
 
     def __repr__(self):
         return self.__str__()
